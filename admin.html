@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Admin - NĐNST-STUDIO</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="admin-container">
+<h2>ADMIN QUẢN LÝ WEBSITE</h2>
+
+<h3>Logo</h3>
+<input type="file" id="logoInput">
+
+<h3>Background</h3>
+<input type="file" id="bgInput">
+
+<input type="text" id="sloganInput" placeholder="Nhập slogan">
+<textarea id="introInput" placeholder="Nhập giới thiệu"></textarea>
+
+<h3>Ảnh giới thiệu</h3>
+<input type="file" id="introImagesInput" multiple>
+<button onclick="addIntroImages()">Thêm ảnh giới thiệu</button>
+
+<h3>Thêm Album</h3>
+<input type="text" id="albumName" placeholder="Tên album">
+<input type="text" id="albumLink" placeholder="Link Google Drive">
+<input type="file" id="albumCover">
+<button onclick="addAlbum()">Thêm Album</button>
+
+<h3>Link Facebook Messenger</h3>
+<input type="text" id="facebookInput" placeholder="Link Messenger">
+
+<button onclick="saveData()">LƯU ONLINE</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+/* 🔥 DÁN CONFIG GIỐNG INDEX */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  databaseURL: "YOUR_DATABASE_URL",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+let studioData = {
+  logo:"",
+  background:"",
+  slogan:"",
+  intro:"",
+  introImages:[],
+  albums:[],
+  facebook:""
+};
+
+function getBase64(file, callback){
+  const reader = new FileReader();
+  reader.onload = ()=> callback(reader.result);
+  reader.readAsDataURL(file);
+}
+
+document.getElementById("logoInput").onchange = e=>{
+  getBase64(e.target.files[0], result=>{
+    studioData.logo=result;
+  });
+};
+
+document.getElementById("bgInput").onchange = e=>{
+  getBase64(e.target.files[0], result=>{
+    studioData.background=result;
+  });
+};
+
+window.addIntroImages = function(){
+  const files = document.getElementById("introImagesInput").files;
+  for(let file of files){
+    getBase64(file, result=>{
+      studioData.introImages.push(result);
+    });
+  }
+  alert("Đã thêm ảnh!");
+};
+
+window.addAlbum = function(){
+  const name=document.getElementById("albumName").value;
+  const link=document.getElementById("albumLink").value;
+  const file=document.getElementById("albumCover").files[0];
+
+  getBase64(file, result=>{
+    studioData.albums.push({
+      name:name,
+      link:link,
+      cover:result
+    });
+    alert("Đã thêm album!");
+  });
+};
+
+window.saveData = function(){
+  studioData.slogan=document.getElementById("sloganInput").value;
+  studioData.intro=document.getElementById("introInput").value;
+  studioData.facebook=document.getElementById("facebookInput").value;
+
+  set(ref(database,"studioData"), studioData);
+  alert("🔥 Lưu ONLINE thành công!");
+};
+
+</script>
+
+</body>
+</html>
