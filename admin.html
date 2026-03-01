@@ -100,8 +100,18 @@ function saveData(){
     studioData.intro=document.getElementById("introInput").value;
     studioData.facebook=document.getElementById("facebookInput").value;
 
-    set(ref(database, "studioData"), studioData);
-    alert("Đã lưu ONLINE thành công!");
+    localStorage.setItem("studioData",JSON.stringify(studioData));
+
+    const githubUser = document.getElementById("githubUser").value.trim();
+    const domainName = document.getElementById("domainName").value.trim();
+
+    if(githubUser && domainName){
+        const newLink = `https://${githubUser}.github.io/${domainName}/index.html`;
+        alert("Đã lưu thành công! Đang mở liên kết GitHub...");
+        window.open(newLink, "_blank");
+    }else{
+        alert("Lưu thành công! Vui lòng nhập GitHub để xuất bản.");
+    }
 }
 </script>
 
@@ -138,38 +148,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-const dbRef = ref(database, "studioData");
+function saveData(){
+    set(ref(database, "studioData"), studioData);
+    alert("Đã lưu ONLINE thành công!");
+}
 
-onValue(dbRef, (snapshot) => {
-  const data = snapshot.val();
-  if(data){
-    document.getElementById("logo").src = data.logo;
-    document.getElementById("header").style.backgroundImage = `url(${data.background})`;
-    document.getElementById("slogan").innerText = data.slogan;
-    document.getElementById("introText").innerText = data.intro;
-    document.getElementById("facebookLink").href = data.facebook;
-
-    const introGallery = document.getElementById("introGallery");
-    introGallery.innerHTML="";
-    data.introImages.forEach(img=>{
-      let image=document.createElement("img");
-      image.src=img;
-      introGallery.appendChild(image);
-    });
-
-    const albumList=document.getElementById("albumList");
-    albumList.innerHTML="";
-    data.albums.forEach(album=>{
-      let card=document.createElement("div");
-      card.className="album-card";
-      card.innerHTML=`<img src="${album.cover}"><h3>${album.name}</h3>`;
-      card.onclick=()=>window.open(album.link,"_blank");
-      albumList.appendChild(card);
-    });
-  }
-});
 </script>
 
 </body>
 
 </html>
+
