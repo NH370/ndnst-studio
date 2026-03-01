@@ -76,5 +76,57 @@ if(data){
 }
 </script>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+
+<script>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC8CC9chIzKyeun8IUdDlHljg1pT8l51Uo",
+  authDomain: "ndnst-studio.firebaseapp.com",
+  databaseURL: "https://ndnst-studio-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ndnst-studio",
+  storageBucket: "ndnst-studio.firebasestorage.app",
+  messagingSenderId: "432107614469",
+  appId: "1:432107614469:web:35c98284776c08e0ed076c"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+const dbRef = ref(database, "studioData");
+
+onValue(dbRef, (snapshot) => {
+  const data = snapshot.val();
+  if(data){
+    document.getElementById("logo").src = data.logo;
+    document.getElementById("header").style.backgroundImage = `url(${data.background})`;
+    document.getElementById("slogan").innerText = data.slogan;
+    document.getElementById("introText").innerText = data.intro;
+    document.getElementById("facebookLink").href = data.facebook;
+
+    const introGallery = document.getElementById("introGallery");
+    introGallery.innerHTML="";
+    data.introImages.forEach(img=>{
+      let image=document.createElement("img");
+      image.src=img;
+      introGallery.appendChild(image);
+    });
+
+    const albumList=document.getElementById("albumList");
+    albumList.innerHTML="";
+    data.albums.forEach(album=>{
+      let card=document.createElement("div");
+      card.className="album-card";
+      card.innerHTML=`<img src="${album.cover}"><h3>${album.name}</h3>`;
+      card.onclick=()=>window.open(album.link,"_blank");
+      albumList.appendChild(card);
+    });
+  }
+});
+</script>
+
 </body>
 </html>
