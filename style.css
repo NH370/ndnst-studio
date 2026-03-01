@@ -1,0 +1,199 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+    background:#111;
+    color:white;
+}
+
+/* ===== HEADER ===== */
+header{
+    height:100vh;
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    position:relative;
+}
+
+header::after{
+    content:"";
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+}
+
+header .content{
+    position:relative;
+    z-index:2;
+    animation: fadeIn 2s ease;
+}
+
+.logo{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-bottom:20px;
+    border:3px solid white;
+}
+
+h1{
+    font-size:45px;
+    letter-spacing:3px;
+}
+
+.slogan{
+    font-style:italic;
+    margin-top:10px;
+    font-size:18px;
+    opacity:0.8;
+}
+
+.by{
+    margin-top:10px;
+    font-size:14px;
+    opacity:0.7;
+}
+
+/* ===== SECTION ===== */
+section{
+    padding:60px 10%;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:40px;
+    font-size:30px;
+    letter-spacing:2px;
+}
+
+/* ===== INTRO IMAGES ===== */
+.intro-gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.intro-gallery img{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+    border-radius:10px;
+    transition:0.4s;
+}
+
+.intro-gallery img:hover{
+    transform:scale(1.05);
+}
+
+/* ===== ALBUM ===== */
+.album-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+}
+
+.album-card{
+    background:#1c1c1c;
+    border-radius:10px;
+    overflow:hidden;
+    transition:0.4s;
+    cursor:pointer;
+}
+
+.album-card:hover{
+    transform:translateY(-10px);
+}
+
+.album-card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.album-card h3{
+    padding:15px;
+}
+
+/* ===== CONTACT ===== */
+.contact{
+    text-align:center;
+}
+
+.contact a{
+    background:#0078ff;
+    padding:12px 25px;
+    border-radius:30px;
+    text-decoration:none;
+    color:white;
+    transition:0.3s;
+}
+
+.contact a:hover{
+    background:#0056b3;
+}
+
+/* ===== ADMIN ===== */
+.admin-container{
+    padding:40px 10%;
+}
+
+.admin-container input,
+.admin-container textarea,
+.admin-container button{
+    width:100%;
+    margin-bottom:15px;
+    padding:10px;
+}
+
+.admin-container button{
+    background:#0078ff;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+.admin-container button:hover{
+    background:#0056b3;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
+}
+/* ===== COPYRIGHT ===== */
+footer{
+    background:#0d0d0d;
+    text-align:center;
+    padding:20px 10%;
+    border-top:1px solid #222;
+}
+
+.footer-content{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.copyright-logo{
+    width:30px;
+    height:30px;
+    object-fit:contain;
+    border-radius:50%;
+}
+
+footer p{
+    font-size:14px;
+    opacity:0.7;
+}

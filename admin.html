@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin - NĐNST-STUDIO</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="admin-container">
+<h2>ADMIN QUẢN LÝ WEBSITE</h2>
+
+<input type="file" id="logoInput">
+<input type="file" id="bgInput">
+
+<input type="text" id="sloganInput" placeholder="Nhập slogan">
+<textarea id="introInput" placeholder="Nhập giới thiệu"></textarea>
+
+<input type="file" id="introImagesInput" multiple>
+<button onclick="addIntroImages()">Thêm ảnh giới thiệu</button>
+
+<h3>Thêm Album</h3>
+<input type="text" id="albumName" placeholder="Tên album">
+<input type="text" id="albumLink" placeholder="Link Google Drive">
+<input type="file" id="albumCover">
+<button onclick="addAlbum()">Thêm Album</button>
+
+<h3>Link Facebook Messenger</h3>
+<input type="text" id="facebookInput" placeholder="Link Messenger">
+
+<h3>Xuất bản GitHub Pages</h3>
+<input type="text" id="githubUser" placeholder="Nhập username GitHub">
+<input type="text" id="domainName" placeholder="Tên miền phía sau (vd: ndnst-studio)">
+
+<button onclick="saveData()">LƯU WEBSITE</button>
+</div>
+
+<script>
+let studioData = {
+    logo:"",
+    background:"",
+    slogan:"",
+    intro:"",
+    introImages:[],
+    albums:[],
+    facebook:""
+};
+
+function getBase64(file, callback){
+    const reader = new FileReader();
+    reader.onload = ()=> callback(reader.result);
+    reader.readAsDataURL(file);
+}
+
+document.getElementById("logoInput").onchange = e=>{
+    getBase64(e.target.files[0], result=>{
+        studioData.logo=result;
+    });
+}
+
+document.getElementById("bgInput").onchange = e=>{
+    getBase64(e.target.files[0], result=>{
+        studioData.background=result;
+    });
+}
+
+function addIntroImages(){
+    const files = document.getElementById("introImagesInput").files;
+    for(let file of files){
+        getBase64(file, result=>{
+            studioData.introImages.push(result);
+        });
+    }
+    alert("Đã thêm ảnh giới thiệu!");
+}
+
+function addAlbum(){
+    const name=document.getElementById("albumName").value;
+    const link=document.getElementById("albumLink").value;
+    const file=document.getElementById("albumCover").files[0];
+
+    getBase64(file, result=>{
+        studioData.albums.push({
+            name:name,
+            link:link,
+            cover:result
+        });
+        alert("Đã thêm album!");
+    });
+}
+
+function saveData(){
+    studioData.slogan=document.getElementById("sloganInput").value;
+    studioData.intro=document.getElementById("introInput").value;
+    studioData.facebook=document.getElementById("facebookInput").value;
+
+    localStorage.setItem("studioData",JSON.stringify(studioData));
+
+    const githubUser = document.getElementById("githubUser").value.trim();
+    const domainName = document.getElementById("domainName").value.trim();
+
+    if(githubUser && domainName){
+        const newLink = `https://${githubUser}.github.io/${domainName}/index.html`;
+        alert("Đã lưu thành công! Đang mở liên kết GitHub...");
+        window.open(newLink, "_blank");
+    }else{
+        alert("Lưu thành công! Vui lòng nhập GitHub để xuất bản.");
+    }
+}
+</script>
+
+<footer>
+    <div class="footer-content">
+        <img id="adminCopyrightLogo" class="copyright-logo">
+        <p>© 2026 NĐNST-STUDIO | By Đ.Nhật</p>
+    </div>
+</footer>
+
+<script>
+const saved = JSON.parse(localStorage.getItem("studioData"));
+if(saved){
+    document.getElementById("adminCopyrightLogo").src = saved.logo;
+}
+</script>
+
+</body>
+</html>
