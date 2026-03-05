@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Admin - NĐNST-STUDIO</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="admin-container">
+<h2>ADMIN PANEL</h2>
+
+<h3>Logo</h3>
+<input type="file" id="logoInput">
+
+<h3>Background</h3>
+<input type="file" id="bgInput">
+
+<input type="text" id="sloganInput" placeholder="Slogan">
+<textarea id="introInput" placeholder="Giới thiệu"></textarea>
+
+<h3>Ảnh giới thiệu</h3>
+<input type="file" id="introImagesInput" multiple>
+<button onclick="addIntroImages()">Thêm ảnh</button>
+<div id="previewIntro"></div>
+
+<h3>Album</h3>
+<input type="text" id="albumName" placeholder="Tên album">
+<input type="text" id="albumLink" placeholder="Link Google Drive">
+<input type="file" id="albumCover">
+<button onclick="addAlbum()">Thêm album</button>
+<div id="previewAlbum"></div>
+
+<h3>Facebook</h3>
+<input type="text" id="facebookInput" placeholder="Link Messenger">
+
+<button onclick="saveData()">LƯU ONLINE</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+  getDatabase, 
+  ref, 
+  set, 
+  push, 
+  remove, 
+  onValue 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+/* 🔥 DÁN CONFIG GIỐNG INDEX */
+const firebaseConfig = {
+  apiKey: "AIzaSyC8CC9chIzKyeun8IUdDlHljg1pT8l51Uo",
+  authDomain: "ndnst-studio.firebaseapp.com",
+  databaseURL: "https://ndnst-studio-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ndnst-studio",
+  storageBucket: "ndnst-studio.firebasestorage.app",
+  messagingSenderId: "432107614469",
+  appId: "1:432107614469:web:35c98284776c08e0ed076c"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+
+let studioData={
+  logo:"",
+  background:"",
+  slogan:"",
+  intro:"",
+  introImages:[],
+  albums:[],
+  facebook:""
+};
+
+function getBase64(file){
+  return new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.readAsDataURL(file);
+  });
+}
+
+/* LOAD DATA KHI MỞ ADMIN */
+onValue(ref(db,"studioData"),snapshot=>{
+  const data=snapshot.val();
+  if(!data) return;
+
+  studioData=data;
+  sloganInput.value=data.slogan||"";
+  introInput.value=data.intro||"";
+  facebookInput.value=data.facebook||"";
+  renderIntro();
+  renderAlbum();
+});
+
+/* LOGO */
+logoInput.onchange=async e=>{
+  studioData.logo=await getBase64(e.target.files[0]);
+};
+
+/* BACKGROUND */
+bgInput.onchange=async e=>{
+  studioData.background=await getBase64(e.target.files[0]);
+};
+
+/* THÊM ẢNH GIỚI THIỆU */
+window.addIntroImages=async ()=>{
+  const files=introImagesInput.files;
+  for(let file of files){
+    const img=await getBase64(file);
+    studioData.introImages.push(img);
+  }
+  renderIntro();
+};
+
+function renderIntro(){
+  previewIntro.innerHTML="";
+  studioData.introImages.forEach((img,index)=>{
+    const div=document.createElement("div");
+    div.innerHTML=`<img src="${img}" width="100"><button onclick="deleteIntro(${index})">X</button>`;
+    previewIntro.appendChild(div);
+  });
+}
+
+window.deleteIntro=index=>{
+  studioData.introImages.splice(index,1);
+  renderIntro();
+};
+
+/* THÊM ALBUM */
+window.addAlbum=async ()=>{
+  const cover=await getBase64(albumCover.files[0]);
+  studioData.albums.push({
+    name:albumName.value,
+    link:albumLink.value,
+    cover:cover
+  });
+  renderAlbum();
+};
+
+function renderAlbum(){
+  previewAlbum.innerHTML="";
+  studioData.albums.forEach((a,index)=>{
+    const div=document.createElement("div");
+    div.innerHTML=`<img src="${a.cover}" width="100"><span>${a.name}</span>
+    <button onclick="deleteAlbum(${index})">X</button>`;
+    previewAlbum.appendChild(div);
+  });
+}
+
+window.deleteAlbum=index=>{
+  studioData.albums.splice(index,1);
+  renderAlbum();
+};
+
+/* LƯU ONLINE */
+window.saveData=()=>{
+  studioData.slogan=sloganInput.value;
+  studioData.intro=introInput.value;
+  studioData.facebook=facebookInput.value;
+
+  set(ref(db,"studioData"),studioData);
+  alert("🔥 Đã lưu ONLINE thành công!");
+};
+
+</script>
+
+</body>
+</html>
